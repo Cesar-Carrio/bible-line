@@ -92,7 +92,14 @@ main() {
     local found_config=false
     
     # Get all potential RC files
-    readarray -t rc_files < <(get_shell_files)
+    local rc_files_list
+    rc_files_list=$(get_shell_files)
+    
+    # Convert to array using a more compatible method
+    local rc_files=()
+    while IFS= read -r line; do
+        [[ -n "$line" ]] && rc_files+=("$line")
+    done <<< "$rc_files_list"
     
     if [[ ${#rc_files[@]} -eq 0 ]]; then
         echo -e "${YELLOW}No shell configuration files found.${NC}"
