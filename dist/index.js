@@ -39,14 +39,81 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const colors_1 = __importDefault(require("colors"));
+const blessed = __importStar(require("blessed"));
 // Import bible data with proper typing
 const bibleDataPath = path.join(__dirname, 'data', 'bibleChapters.json');
 const bibleData = JSON.parse(fs.readFileSync(bibleDataPath, 'utf8'));
 const version = 'en-kjv';
+// Function to display content in a scrollable terminal interface
+function displayScrollableContent(title, content) {
+    // Create a screen object
+    const screen = blessed.screen({
+        smartCSR: true,
+        title: 'Bible Line - Scrollable View'
+    });
+    // Create a scrollable box
+    const box = blessed.box({
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        content: `${title}\n\n${content}`,
+        tags: true,
+        border: {
+            type: 'line'
+        },
+        style: {
+            fg: 'white',
+            bg: 'black',
+            border: {
+                fg: 'cyan'
+            }
+        },
+        scrollable: true,
+        alwaysScroll: true,
+        scrollbar: {
+            ch: ' ',
+            track: {
+                bg: 'cyan'
+            },
+            style: {
+                inverse: true
+            }
+        },
+        keys: true,
+        vi: true,
+        mouse: true
+    });
+    // Add instructions at the bottom
+    const instructions = blessed.box({
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        height: 3,
+        content: '{center}{cyan-fg}Use ↑↓ arrows or j/k to scroll • Press q or Ctrl+C to exit{/cyan-fg}{/center}',
+        tags: true,
+        style: {
+            fg: 'white',
+            bg: 'black'
+        }
+    });
+    // Append to screen
+    screen.append(box);
+    screen.append(instructions);
+    // Key bindings
+    screen.key(['escape', 'q', 'C-c'], function () {
+        return process.exit(0);
+    });
+    // Focus the scrollable box
+    box.focus();
+    // Render the screen
+    screen.render();
+}
 // Command line argument handling
 const args = process.argv.slice(2);
 const helpFlag = args.includes('--help') || args.includes('-h');
 const versionFlag = args.includes('--version') || args.includes('-v');
+const consoleFlag = args.includes('--console') || args.includes('-c');
 if (helpFlag) {
     console.log(`
 ${colors_1.default.cyan.bold('Bible Line')} - Get a random Bible verse
@@ -57,9 +124,11 @@ ${colors_1.default.yellow('Usage:')}
 ${colors_1.default.yellow('Options:')}
   -h, --help     Show this help message
   -v, --version  Show version information
+  -c, --console  Use traditional console output (default is scrollable view)
 
 ${colors_1.default.yellow('Examples:')}
-  bible-line
+  bible-line                    # Uses scrollable view (default)
+  bible-line --console          # Uses traditional console output
   bible-line --help
   bible-line --version
 
@@ -103,13 +172,25 @@ function getRandomBibleChapter() {
                 return !dupe;
             });
             // Display results
-            console.log(colors_1.default.cyan.bold.underline(`\nBook: ${String(book)} - Chapter: ${chapter}\n`));
+            const title = `Book: ${String(book)} - Chapter: ${chapter}`;
             let verses = '';
             versesDeduped.forEach(({ verse, text }) => {
-                verses += colors_1.default.red(`${verse}  `) + colors_1.default.green(`${text}\n`);
+                verses += `${verse}  ${text}\n`;
             });
-            console.log(verses);
-            console.log(colors_1.default.gray(`\nTotal verses: ${versesDeduped.length}`));
+            if (consoleFlag) {
+                // Use traditional console output
+                console.log(colors_1.default.cyan.bold.underline(`\n${title}\n`));
+                let coloredVerses = '';
+                versesDeduped.forEach(({ verse, text }) => {
+                    coloredVerses += colors_1.default.red(`${verse}  `) + colors_1.default.green(`${text}\n`);
+                });
+                console.log(coloredVerses);
+                console.log(colors_1.default.gray(`\nTotal verses: ${versesDeduped.length}`));
+            }
+            else {
+                // Use scrollable interface (default)
+                displayScrollableContent(title, verses + `\nTotal verses: ${versesDeduped.length}`);
+            }
         }
         catch (error) {
             console.error(colors_1.default.red.bold('Error:'), colors_1.default.red(error instanceof Error ? error.message : 'An unknown error occurred'));

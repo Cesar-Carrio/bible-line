@@ -1,6 +1,6 @@
 # Bible Line 📖
 
-A simple terminal application that fetches and displays random Bible chapters with beautiful formatting.
+A beautiful terminal application that fetches and displays random Bible chapters with an interactive scrollable interface and colorful formatting.
 
 ## Table of Contents
 
@@ -20,12 +20,17 @@ A simple terminal application that fetches and displays random Bible chapters wi
 ## Features
 
 - 🎲 Displays random Bible chapters
+- 📜 **Interactive scrollable interface** with keyboard navigation (default)
 - 🌈 Colorful terminal output with verse numbers
+- ⌨️ **Keyboard controls**: Arrow keys, vim keys (j/k), mouse wheel scrolling
+- 🖥️ **Dual display modes**: Scrollable interface or traditional console output
 - 📱 Cross-platform compatibility (Windows, macOS, Linux)
 - 🚀 Fast and lightweight
 - 💻 Works in all shells (Bash, Zsh, PowerShell, etc.)
 - 🛡️ Robust error handling
 - 📖 King James Version (KJV) Bible text
+- 🎯 **Visual scrollbar** and intuitive navigation
+- 🚪 **Easy exit**: Press `q`, `Esc`, or `Ctrl+C` to exit
 
 ## Quick Start
 
@@ -111,21 +116,71 @@ npm start
 ### Command Line Options
 
 ```bash
-# Show help information (if installed globally)
+# Default: Interactive scrollable interface (if installed globally)
+bible-line
+
+# Traditional console output
+bible-line --console
+bible-line -c
+
+# Show help information
 bible-line --help
 bible-line -h
 
-# Show version information (if installed globally)
+# Show version information
 bible-line --version
 bible-line -v
 
 # Or from project directory
+npm start                    # Scrollable interface (default)
+npm start -- --console       # Traditional console output
 npm start -- --help
 npm start -- --version
 ```
 
+### Display Modes
+
+**🔄 Scrollable Interface (Default):**
+- Interactive navigation with arrow keys or vim keys (j/k)
+- Visual scrollbar showing position in the text
+- Mouse wheel support
+- Press `q`, `Esc`, or `Ctrl+C` to exit
+- Perfect for longer chapters that exceed terminal height
+
+**📄 Traditional Console Output:**
+- Classic terminal output with colored text
+- All verses printed at once
+- Use `--console` or `-c` flag to enable
+- Ideal for scripting or piping output
+
 ### Example Output
 
+**Scrollable Interface (Default):**
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Book: psalms - Chapter: 23                                      │
+│                                                                 │
+│ 1  The LORD is my shepherd; I shall not want.                  │
+│ 2  He maketh me to lie down in green pastures: he leadeth me   │
+│    beside the still waters.                                    │
+│ 3  He restoreth my soul: he leadeth me in the paths of        │
+│    righteousness for his name's sake.                         │
+│ 4  Yea, though I walk through the valley of the shadow of     │
+│    death, I will fear no evil: for thou art with me; thy rod  │
+│    and thy staff they comfort me.                             │
+│ 5  Thou preparest a table before me in the presence of mine   │
+│    enemies: thou anointest my head with oil; my cup runneth   │
+│    over.                                                       │
+│ 6  Surely goodness and mercy shall follow me all the days of  │
+│    my life: and I will dwell in the house of the LORD for     │
+│    ever.                                                       │
+│                                                                │
+│ Total verses: 6                                                │
+└─────────────────────────────────────────────────────────────────┘
+    Use ↑↓ arrows or j/k to scroll • Press q or Ctrl+C to exit
+```
+
+**Traditional Console Output (`--console`):**
 ```
 Fetching Bible chapter...
 
@@ -150,11 +205,13 @@ bible-line/
 ├── src/
 │   ├── data/
 │   │   └── bibleChapters.json    # Bible book and chapter data
-│   └── index.ts                  # Main application code
+│   └── index.ts                  # Main application code with scrollable UI
 ├── dist/                         # Compiled JavaScript output
 ├── setup-autorun.sh              # Unix/Linux/macOS setup script
 ├── setup-autorun.ps1             # Windows PowerShell setup script
-├── uninstall-autorun.sh          # Removal script
+├── uninstall-autorun.sh          # Unix/Linux/macOS uninstall script
+├── uninstall-autorun.ps1         # Windows PowerShell uninstall script
+├── uninstall-autorun.bat         # Windows batch file uninstall script
 ├── package.json                  # npm configuration with bin field
 ├── tsconfig.json                 # TypeScript configuration
 └── README.md                     # This file
@@ -376,11 +433,31 @@ fi
 
 ### Removing Auto-Run
 
-#### Easy Removal (Recommended)
-Use the automated uninstall script:
+#### 🚀 Easy Removal (Recommended)
+Use the automated uninstall scripts for your platform:
+
+**Unix/Linux/macOS:**
 ```bash
 ./uninstall-autorun.sh
 ```
+
+**Windows PowerShell:**
+```powershell
+.\uninstall-autorun.ps1
+```
+
+**Windows Command Prompt:**
+```cmd
+uninstall-autorun.bat
+```
+
+#### What the uninstall scripts do:
+- 🔍 **Detect configurations** in all shell profiles automatically
+- 💾 **Create backups** before making any changes
+- 🗑️ **Remove Bible Line** from all detected shell configurations
+- ✅ **Clean removal** of both scrollable and console output modes
+- 🔧 **Optional global executable removal** via npm unlink/uninstall
+- 📋 **Show manual usage** instructions after removal
 
 #### Manual Removal
 To stop Bible Line from running automatically:
@@ -491,9 +568,22 @@ This project is open source. Please check the LICENSE file for details.
   .\setup-autorun.ps1          # Run setup
   ```
 
-- **`uninstall-autorun.sh`**: Remove auto-run configuration
+### Uninstall Scripts
+
+- **`uninstall-autorun.sh`**: Remove auto-run configuration (Unix/Linux/macOS)
   ```bash
   ./uninstall-autorun.sh       # Remove from all detected shells
+  ```
+
+- **`uninstall-autorun.ps1`**: Remove auto-run configuration (Windows PowerShell)
+  ```powershell
+  .\uninstall-autorun.ps1      # Remove from PowerShell profiles
+  .\uninstall-autorun.ps1 -Force  # Skip confirmations
+  ```
+
+- **`uninstall-autorun.bat`**: Remove auto-run configuration (Windows Command Prompt)
+  ```cmd
+  uninstall-autorun.bat        # Remove from Windows shell configurations
   ```
 
 ### Safety Features
@@ -509,6 +599,7 @@ This project is open source. Please check the LICENSE file for details.
 - Bible text provided by [Bible API](https://github.com/wldeh/bible-api)
 - Built with TypeScript and Node.js
 - Terminal colors powered by the [colors](https://www.npmjs.com/package/colors) package
+- Interactive terminal UI powered by the [blessed](https://www.npmjs.com/package/blessed) library
 
 ---
 

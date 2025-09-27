@@ -11,11 +11,13 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
+GRAY='\033[0;37m'
 NC='\033[0m' # No Color
 
 echo -e "${CYAN}╔══════════════════════════════════════════════════════════════╗${NC}"
 echo -e "${CYAN}║                Bible Line Uninstall                         ║${NC}"
 echo -e "${CYAN}║            Remove Auto-Run Configuration                    ║${NC}"
+echo -e "${CYAN}║        (Scrollable Interface & Traditional Output)          ║${NC}"
 echo -e "${CYAN}╚══════════════════════════════════════════════════════════════╝${NC}"
 echo
 
@@ -35,7 +37,7 @@ get_shell_files() {
 # Function to check if Bible Line is configured
 check_bible_line_config() {
     local rc_file="$1"
-    grep -q "Bible Line\|BIBLE_LINE_RUNNING\|bible-line" "$rc_file" 2>/dev/null
+    grep -q "Bible Line\|BIBLE_LINE_RUNNING\|bible-line\|npm start.*bible-line" "$rc_file" 2>/dev/null
 }
 
 # Function to remove Bible Line configuration
@@ -49,13 +51,17 @@ remove_bible_line() {
     cp "$rc_file" "$backup_file"
     echo -e "${GREEN}✓${NC} Backup created: $backup_file"
     
-    # Remove Bible Line configuration
+    # Remove Bible Line configuration (enhanced pattern matching)
     awk '
     /# Bible Line/ { in_block=1; next }
     /BIBLE_LINE_RUNNING/ && in_block { next }
     /bible-line/ && in_block { next }
+    /npm start.*bible-line/ && in_block { next }
     /timeout.*bible-line/ && in_block { next }
     /gtimeout.*bible-line/ && in_block { next }
+    /Random Bible verse/ && in_block { next }
+    /terminal startup/ && in_block { next }
+    /cd.*bible-line.*npm start/ && in_block { next }
     /^$/ && in_block { in_block=0; next }
     /^[[:space:]]*#/ && in_block { next }
     /^[[:space:]]*if/ && in_block { 
@@ -67,6 +73,10 @@ remove_bible_line() {
         if (brace_count==0) in_block=0
         next
     }
+    /^[[:space:]]*\(.*cd.*bible-line/ && in_block { next }
+    /^[[:space:]]*export.*BIBLE_LINE/ && in_block { next }
+    /^[[:space:]]*unset.*BIBLE_LINE/ && in_block { next }
+    /^[[:space:]]*set.*BIBLE_LINE/ && in_block { next }
     /^[[:space:]]*end$/ && in_block { in_block=0; next }
     in_block { next }
     { print }
@@ -131,6 +141,7 @@ main() {
     echo -e "${GREEN}╚══════════════════════════════════════════════════════════════╝${NC}"
     echo
     echo -e "${GREEN}✓${NC} Bible Line auto-run has been removed from your shell configuration(s)"
+    echo -e "${GREEN}✓${NC} Both scrollable interface and console output modes are now disabled"
     echo -e "${GREEN}✓${NC} Backup files have been created for safety"
     echo
     
@@ -159,10 +170,13 @@ main() {
     echo
     if command -v bible-line >/dev/null 2>&1; then
         echo -e "${BLUE}You can still run Bible Line manually with:${NC}"
-        echo -e "${CYAN}bible-line${NC}"
+        echo -e "${CYAN}bible-line${NC}             # Scrollable interface (default)"
+        echo -e "${CYAN}bible-line --console${NC}   # Traditional console output"
     else
         echo -e "${BLUE}To run Bible Line manually, use:${NC}"
-        echo -e "${CYAN}npm start${NC} (from the project directory)"
+        echo -e "${CYAN}npm start${NC}              # Scrollable interface (default)"
+        echo -e "${CYAN}npm start -- --console${NC} # Traditional console output"
+        echo -e "${GRAY}(from the project directory)${NC}"
     fi
 }
 
