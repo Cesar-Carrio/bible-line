@@ -4,10 +4,32 @@
   },
   "name": "bible-line",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A beautiful terminal application that displays random Bible chapters with colorful formatting. Perfect for daily inspiration and devotions.",
+  "main": "dist/index.js",
   "bin": {
     "bible-line": "./dist/index.js"
+  },
+  "keywords": [
+    "bible",
+    "terminal",
+    "cli",
+    "devotional",
+    "scripture",
+    "kjv",
+    "random",
+    "verse",
+    "inspiration",
+    "christian",
+    "daily",
+    "executable"
+  ],
+  "homepage": "https://github.com/cesar-carrio/bible-line#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cesar-carrio/bible-line.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cesar-carrio/bible-line/issues"
   },
   "scripts": {
     "build": "tsc",
@@ -25,7 +47,6 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
-    "colors": "^1.4.0",
-    "dotenv": "^16.4.5"
+    "colors": "^1.4.0"
   }
 }
