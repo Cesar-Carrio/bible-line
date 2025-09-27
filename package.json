@@ -32,7 +32,7 @@
     "url": "https://github.com/cesar-carrio/bible-line/issues"
   },
   "scripts": {
-    "build": "tsc && cp -r src/data dist/",
+    "build": "tsc && node scripts/copy-data.js",
     "start": "node dist/index.js",
     "dev": "nodemon src/index.ts",
     "clean": "rm -rf dist",
